@@ -84,10 +84,13 @@ begin
 
   begin
     m_running := true;
-    m_event.Acquire;
     while m_running do
     begin
       wait := m_event.WaitFor;
+      WriteLn('Event set');
+
+      if not m_running then
+        break;
 
       if wait = TWaitResult.wrSignaled then
       begin
@@ -96,12 +99,12 @@ begin
         begin
           WriteLn('Processing: ', entry.ToString);
           sleep(floor(entry.Duration * 1000));
+          WriteLn('Done');
           entry.Free;
         end;
         m_event.ResetEvent;
       end;
     end;
-    m_event.Release;
   end);
 
   m_task.Start;
